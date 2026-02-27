@@ -1,6 +1,6 @@
 import { buildApp } from "./app.js";
-import { env } from "../config/env.js";
-import { logger } from "../config/logger.js";
+import { env } from "../src/config/env.js";
+import { logger } from "../src/config/logger.js";
 
 process.on("uncaughtException", (err: any) => {
   console.error("❌ uncaughtException:", err);
