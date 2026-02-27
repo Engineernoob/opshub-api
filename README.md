@@ -212,9 +212,9 @@ It reflects how I build APIs intended for real deployment environments.
 
 ## Live
 
-- API: [https://YOUR-RENDER-URL.onrender.com](https://opshub-api.onrender.com)
-- Health: [https://YOUR-RENDER-URL.onrender.com/health](https://opshub-api.onrender.com/health)
-- Docs: [https://YOUR-RENDER-URL.onrender.com/docs](https://opshub-api.onrender.com/docs)
+- API: https://opshub-api.onrender.com
+- Health:https://opshub-api.onrender.com/health
+- Docs: https://opshub-api.onrender.com/docs
 
 ## Author
 
