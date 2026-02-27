@@ -3,23 +3,20 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "target": "es2022",
+
+    "rootDir": "./src",
+    "outDir": "./dist",
+
     "types": ["node"],
+    "strict": true,
+    "skipLibCheck": true,
 
     "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
+    "declaration": false,
+    "verbatimModuleSyntax": false,
 
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-
-    "strict": true,
-    "jsx": "react-jsx",
-
-    "verbatimModuleSyntax": false,
-    "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true
+    "exactOptionalPropertyTypes": true
   },
-  "include": ["src", "tests"]
+  "include": ["src"]
 }

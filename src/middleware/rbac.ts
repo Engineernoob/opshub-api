@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { HttpError } from "../utils/httpError.js";
+import { HttpError } from "../../src/utils/httpError.js";
 
 type Role = "user" | "manager" | "admin";
 

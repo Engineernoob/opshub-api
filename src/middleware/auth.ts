@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { env } from "../config/env.js";
-import { HttpError } from "../utils/httpError.js";
+import { env } from "../../src/config/env.js";
+import { HttpError } from "../../src/utils/httpError.js";
 
 export type AuthUser = { id: string; role: "admin" | "manager" | "user"; email: string };
 

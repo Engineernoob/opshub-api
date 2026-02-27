@@ -1,4 +1,4 @@
-import { HttpError } from "../src/utils/httpError.js";
+import { HttpError } from "../utils/httpError.js";
 import { logger } from "../config/logger.js";
 export function errorHandler(err, _req, res, _next) {
     if (err instanceof HttpError) {

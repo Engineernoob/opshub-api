@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { HttpError } from "../src/utils/httpError.js";
-import { logger } from "../src/config/logger.js";
+import { HttpError } from "../../src/utils/httpError.js";
+import { logger } from "../../src/config/logger.js";
 
 export function errorHandler(
   err: unknown,
