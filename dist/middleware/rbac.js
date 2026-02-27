@@ -1,4 +1,4 @@
-import { HttpError } from "../utils/httpError.js";
+import { HttpError } from "../../src/utils/httpError.js";
 const rank = {
     user: 1,
     manager: 2,

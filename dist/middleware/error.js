@@ -1,5 +1,5 @@
-import { HttpError } from "../utils/httpError.";
-import { logger } from "../config/logger.js";
+import { HttpError } from "../../src/utils/httpError.js";
+import { logger } from "../../src/config/logger.js";
 export function errorHandler(err, _req, res, _next) {
     if (err instanceof HttpError) {
         return res.status(err.status).json({

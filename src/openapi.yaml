@@ -1,0 +1,36 @@
+openapi: 3.0.0
+info:
+  title: OpsHub API
+  version: 1.0.0
+servers:
+  - url: http://localhost:4000
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: OK
+  /auth/register:
+    post:
+      summary: Register
+      responses:
+        "201":
+          description: Created
+  /auth/login:
+    post:
+      summary: Login
+      responses:
+        "200":
+          description: OK
+  /tickets:
+    get:
+      summary: List tickets
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: Create ticket
+      responses:
+        "201":
+          description: Created

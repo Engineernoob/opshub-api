@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import { env } from "../config/env.js";
-import { HttpError } from "../utils/httpError.js";
+import { env } from "../../src/config/env.js";
+import { HttpError } from "../../src/utils/httpError.js";
 export function requireAuth(req, _res, next) {
     const header = req.headers.authorization;
     if (!header?.startsWith("Bearer ")) {
