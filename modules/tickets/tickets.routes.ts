@@ -13,6 +13,12 @@ import {
 
 const router = Router();
 
+function getIdParam(req: any): string {
+  const id = req.params?.id;
+  if (typeof id !== "string" || !id) throw new HttpError(400, "Missing ticket id");
+  return id;
+}
+
 // List tickets (any authenticated user)
 router.get("/", requireAuth, async (req, res, next) => {
   try {
@@ -24,11 +30,8 @@ router.get("/", requireAuth, async (req, res, next) => {
     const assigneeId =
       typeof req.query.assigneeId === "string" ? req.query.assigneeId : undefined;
 
-    // ✅ build params WITHOUT assigning undefined properties
-    const params: { page: number; limit: number; q?: string; status?: string; assigneeId?: string } = {
-      page,
-      limit,
-    };
+    const params: { page: number; limit: number; q?: string; status?: string; assigneeId?: string } =
+      { page, limit };
 
     if (q) params.q = q;
     if (status) params.status = status;
@@ -46,13 +49,22 @@ router.post("/", requireAuth, async (req, res, next) => {
   try {
     const data = createTicketSchema.parse(req.body);
 
+    // ✅ Only include optional fields if they exist
+    const createData: {
+      title: string;
+      createdById: string;
+      description?: string | null;
+      assigneeId?: string | null;
+    } = {
+      title: data.title,
+      createdById: req.user!.id,
+    };
+
+    if (data.description !== undefined) createData.description = data.description ?? null;
+    if (data.assigneeId !== undefined) createData.assigneeId = data.assigneeId ?? null;
+
     const ticket = await prisma.ticket.create({
-      data: {
-        title: data.title,
-        description: data.description,
-        createdById: req.user!.id,
-        assigneeId: data.assigneeId,
-      },
+      data: createData,
     });
 
     res.status(201).json({ ticket });
@@ -64,13 +76,16 @@ router.post("/", requireAuth, async (req, res, next) => {
 // Get by id
 router.get("/:id", requireAuth, async (req, res, next) => {
   try {
+    const id = getIdParam(req);
+
     const ticket = await prisma.ticket.findUnique({
-      where: { id: req.params.id },
+      where: { id },
       include: {
         createdBy: { select: { id: true, email: true, role: true } },
         assignee: { select: { id: true, email: true, role: true } },
       },
     });
+
     if (!ticket) throw new HttpError(404, "Ticket not found");
     res.json({ ticket });
   } catch (e) {
@@ -81,17 +96,28 @@ router.get("/:id", requireAuth, async (req, res, next) => {
 // Update fields (manager+)
 router.patch("/:id", requireAuth, requireRole("manager"), async (req, res, next) => {
   try {
+    const id = getIdParam(req);
     const data = updateTicketSchema.parse(req.body);
-    const existing = await prisma.ticket.findUnique({ where: { id: req.params.id } });
+
+    const existing = await prisma.ticket.findUnique({ where: { id } });
     if (!existing) throw new HttpError(404, "Ticket not found");
 
+    // ✅ Build update payload without undefined
+    const updateData: {
+      title?: string;
+      description?: string | null;
+      assigneeId?: string | null;
+    } = {};
+
+    if (data.title !== undefined) updateData.title = data.title;
+    if (data.description !== undefined) updateData.description = data.description ?? null;
+
+    // Assignee: allow null to unassign
+    if (data.assigneeId !== undefined) updateData.assigneeId = data.assigneeId;
+
     const ticket = await prisma.ticket.update({
-      where: { id: req.params.id },
-      data: {
-        title: data.title ?? undefined,
-        description: data.description ?? undefined,
-        assigneeId: data.assigneeId === undefined ? undefined : data.assigneeId,
-      },
+      where: { id },
+      data: updateData,
     });
 
     res.json({ ticket });
@@ -101,36 +127,36 @@ router.patch("/:id", requireAuth, requireRole("manager"), async (req, res, next)
 });
 
 // Update status (manager+)
-router.patch(
-  "/:id/status",
-  requireAuth,
-  requireRole("manager"),
-  async (req, res, next) => {
-    try {
-      const { status } = updateStatusSchema.parse(req.body);
-      const existing = await prisma.ticket.findUnique({ where: { id: req.params.id } });
-      if (!existing) throw new HttpError(404, "Ticket not found");
+router.patch("/:id/status", requireAuth, requireRole("manager"), async (req, res, next) => {
+  try {
+    const id = getIdParam(req);
+    const { status } = updateStatusSchema.parse(req.body);
 
-      assertTransition(existing.status, status);
+    const existing = await prisma.ticket.findUnique({ where: { id } });
+    if (!existing) throw new HttpError(404, "Ticket not found");
 
-      const ticket = await prisma.ticket.update({
-        where: { id: req.params.id },
-        data: { status },
-      });
+    assertTransition(existing.status, status);
 
-      res.json({ ticket });
-    } catch (e) {
-      next(e);
-    }
+    const ticket = await prisma.ticket.update({
+      where: { id },
+      data: { status },
+    });
+
+    res.json({ ticket });
+  } catch (e) {
+    next(e);
   }
-);
+});
 
 // Delete (admin only)
 router.delete("/:id", requireAuth, requireRole("admin"), async (req, res, next) => {
   try {
-    const existing = await prisma.ticket.findUnique({ where: { id: req.params.id } });
+    const id = getIdParam(req);
+
+    const existing = await prisma.ticket.findUnique({ where: { id } });
     if (!existing) throw new HttpError(404, "Ticket not found");
-    await prisma.ticket.delete({ where: { id: req.params.id } });
+
+    await prisma.ticket.delete({ where: { id } });
     res.status(204).send();
   } catch (e) {
     next(e);
