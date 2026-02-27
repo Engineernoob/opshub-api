@@ -4,8 +4,8 @@
   "description": "",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "node --loader ts-node/esm src/server.ts",
-    "build": "tsc",
+    "dev": "npm run build && node dist/server.js",
+    "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
