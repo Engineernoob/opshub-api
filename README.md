@@ -1,3 +1,5 @@
+![CI](https://github.com/Engineernoob/opshub-api/actions/workflows/ci.yml/badge.svg?branch=master)
+
 # OpsHub API
 
 Production-ready REST API built with TypeScript, Express, Prisma, and PostgreSQL.
